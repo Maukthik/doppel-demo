@@ -73,6 +73,7 @@ class UserSchema(ma.SQLAlchemySchema):
     password = ma.String(required=True, load_only=True,
                          validate=validate.Length(min=3))
     has_password = ma.Boolean(dump_only=True)
+    password_hash = ma.auto_field(dump_only=True)
     avatar_url = ma.String(dump_only=True)
     about_me = ma.auto_field()
     first_seen = ma.auto_field(dump_only=True)
