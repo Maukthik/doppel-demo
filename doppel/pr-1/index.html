@@ -96,48 +96,8 @@ footer{margin:40px 0 0;color:var(--quiet);font-size:.85rem;border-top:1px solid 
 <h1>Describe has_password in the API schema</h1>
 <p class="what">Doppel ran this app's code from before and after the pull request side by side, compared every
 response, and had NVIDIA Nemotron judge each difference against what the pull request says it does.</p>
-<div class="banner grey">Couldn&#x27;t check this PR</div>
-<div class="modes"><div class="mode off"><h3>Your tests <span>test mode</span></h3><p>Couldn't compare: the install command failed:</p><details><summary>The end of the output</summary><pre>^^^^^^^^^^^^
-        File &quot;/tmp/pip-build-env-eu6fgywe/overlay/lib/python3.12/site-packages/hatchling/builders/plugin/interface.py&quot;, line 191, in recurse_selected_project_files
-          if self.config.only_include:
-             ^^^^^^^^^^^^^^^^^^^^^^^^
-        File &quot;/usr/local/lib/python3.12/functools.py&quot;, line 998, in __get__
-          val = self.func(instance)
-                ^^^^^^^^^^^^^^^^^^^
-        File &quot;/tmp/pip-build-env-eu6fgywe/overlay/lib/python3.12/site-packages/hatchling/builders/config.py&quot;, line 715, in only_include
-          only_include = only_include_config.get(&quot;only-include&quot;, self.default_only_include()) or self.packages
-                                                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        File &quot;/tmp/pip-build-env-eu6fgywe/overlay/lib/python3.12/site-packages/hatchling/builders/wheel.py&quot;, line 293, in default_only_include
-          return self.default_file_selection_options.only_include
-                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-        File &quot;/usr/local/lib/python3.12/functools.py&quot;, line 998, in __get__
-          val = self.func(instance)
-                ^^^^^^^^^^^^^^^^^^^
-        File &quot;/tmp/pip-build-env-eu6fgywe/overlay/lib/python3.12/site-packages/hatchling/builders/wheel.py&quot;, line 281, in default_file_selection_options
-          raise ValueError(message)
-      ValueError: Unable to determine which files to ship inside the wheel using the following heuristics: https://hatch.pypa.io/latest/plugins/builder/wheel/#default-file-selection
-      
-      The most likely cause of this is that there is no directory that matches the name of your project (microblog_api).
-      
-      At least one file selection option must be defined in the `tool.hatch.build.targets.wheel` table, see: https://hatch.pypa.io/latest/config/build/
-      
-      As an example, if you intend to ship a directory named `foo` that resides within a `src` directory located at the root of your project, you can define the following:
-      
-      [tool.hatch.build.targets.wheel]
-      packages = [&quot;src/foo&quot;]
-      [end of output]
-  
-  note: This error originates from a subprocess, and is likely not a problem with pip.
-
-[notice] A new release of pip is available: 25.0.1 -&gt; 26.2.1
-[notice] To update, run: pip install --upgrade pip
-error: metadata-generation-failed
-
-× Encountered error while generating package metadata.
-╰─&gt; See above for output.
-
-note: This is an issue with the package mentioned above, not pip.
-hint: See above for details.</pre></details></div><div class="mode off"><h3>Invented users <span>the guided twin</span></h3><p>not set up (no doppel.toml): `doppel init` writes one, so invented users can explore what no test calls</p></div></div>
+<div class="banner red">1 regression the PR doesn&#x27;t mention, seen in 38 requests</div>
+<div class="modes"><div class="mode on"><h3>Your tests <span>test mode · no setup</span></h3><ul><li><b>44</b> tests sent <b>117</b> requests</li><li>command <code>python -m pytest -p no:logging</code> (from tox.ini)</li><li>noise ignored: <code>access_token</code>, <code>first_seen</code>, <code>last_seen</code>, <code>refresh_token</code>, <code>timestamp</code></li><li>left out: 1 compared on outcome only</li><li>every difference re-checked by rerunning 25 tests</li></ul></div><div class="mode off"><h3>Invented users <span>the guided twin</span></h3><p>not set up (no doppel.toml): `doppel init` writes one, so invented users can explore what no test calls</p></div></div>
 <section class="worlds3" aria-label="How Doppel decides">
 <div class="ws"><div class="w"><b>Base</b><span>the code before the PR</span></div>
 <div class="w"><b>Base again</b><span>the same code, run again</span></div>
@@ -145,8 +105,20 @@ hint: See above for details.</pre></details></div><div class="mode off"><h3>Inve
 <div class="wcap"><p><b>Base vs base again:</b> whatever differs between two runs of the same code is noise, and is
 ignored.</p><p><b>Base vs head:</b> every other difference is a behavior change. It is re-checked by running it
 again, then judged by Nemotron against the PR description.</p></div></section>
-
+<h2>Regressions the PR doesn't mention</h2><article class="change regression">
+<header><span class="n">1</span><div><h3>Responses now include password_hash</h3><p><code>GET /api/users</code>, <code>GET /api/me</code>, <code>GET /api/users/{id}/followers</code>, <code>GET /api/posts</code> and 10 more · 38 requests from 25 tests</p></div>
+<span class="pill regression">Regression</span></header><p class="why regression">The diff adds password_hash as a dump_only auto_field, exposing the actual password hash in API responses where it was previously absent, which the PR description does not announce.</p>
+<div class="sbs"><div><p>Base <span>before the PR</span></p><pre>{
+ &quot;data.0.password_hash&quot;: &quot;(absent)&quot;
+}</pre></div>
+<div><p>Head <span>with the PR</span></p><pre>{
+ &quot;data.0.password_hash&quot;: &quot;scrypt:32768:8:1$[hidden on the site]&quot;
+}</pre></div></div>
+<details><summary>All 38 requests behind this change</summary>
+<table class="reqs"><colgroup><col style="width:14%"><col style="width:30%"><col style="width:26%"><col style="width:30%">
+</colgroup><thead><tr><th>Found by</th><th>Who</th><th>Request</th><th>What changed</th></tr></thead>
+<tbody><tr><td>your tests</td><td>test_auth.py::test_get_token</td><td><code>GET /api/users</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_oauth</td><td><code>GET /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_oauth</td><td><code>GET /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_refresh_revoke_all</td><td><code>GET /api/users</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_refresh_token</td><td><code>GET /api/users</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_revoke</td><td><code>GET /api/users</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_pagination.py::test_pagination_after_asc</td><td><code>GET /api/users/1/followers?after=g</code></td><td>changed: data.*.password_hash (added) x19</td></tr><tr><td>your tests</td><td>test_pagination.py::test_pagination_custom_limit</td><td><code>GET /api/posts?offset=16&amp;limit=5</code></td><td>changed: data.*.author.password_hash (added) x5</td></tr><tr><td>your tests</td><td>test_pagination.py::test_pagination_default</td><td><code>GET /api/posts</code></td><td>changed: data.*.author.password_hash (added) x25</td></tr><tr><td>your tests</td><td>test_pagination.py::test_pagination_large_per_page</td><td><code>GET /api/posts?offset=37&amp;limit=50</code></td><td>changed: data.*.author.password_hash (added) x25</td></tr><tr><td>your tests</td><td>test_pagination.py::test_pagination_last</td><td><code>GET /api/posts?offset=99</code></td><td>changed: data.*.author.password_hash (added) x6</td></tr><tr><td>your tests</td><td>test_pagination.py::test_pagination_page</td><td><code>GET /api/posts?offset=30&amp;limit=10</code></td><td>changed: data.*.author.password_hash (added) x10</td></tr><tr><td>your tests</td><td>test_posts.py::test_delete_post</td><td><code>POST /api/posts</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_edit_post</td><td><code>POST /api/posts</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_edit_post</td><td><code>PUT /api/posts/1</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_edit_post</td><td><code>GET /api/posts/1</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_new_post</td><td><code>POST /api/posts</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_new_post</td><td><code>GET /api/posts/1</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_new_post</td><td><code>GET /api/posts</code></td><td>changed: data.*.author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_new_post</td><td><code>GET /api/users/1/posts</code></td><td>changed: data.*.author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_permissions</td><td><code>GET /api/posts/1</code></td><td>changed: author.password_hash (added)</td></tr><tr><td>your tests</td><td>test_posts.py::test_post_feed</td><td><code>GET /api/feed</code></td><td>changed: data.*.author.password_hash (added) x3</td></tr><tr><td>your tests</td><td>test_user_model.py::test_get_users</td><td><code>POST /api/users</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_user_model.py::test_get_users</td><td><code>GET /api/users</code></td><td>changed: data.*.password_hash (added) x2</td></tr><tr><td>your tests</td><td>test_users.py::test_create_user</td><td><code>POST /api/users</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_create_user</td><td><code>GET /api/users/2</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_edit_me</td><td><code>PUT /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_edit_password</td><td><code>PUT /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_edit_user_no_changes</td><td><code>GET /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_edit_user_no_changes</td><td><code>PUT /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_follow_unfollow</td><td><code>POST /api/users</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_follow_unfollow</td><td><code>GET /api/me/following</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_follow_unfollow</td><td><code>GET /api/me/following</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_follow_unfollow</td><td><code>GET /api/users/2/followers</code></td><td>changed: data.*.password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_get_me</td><td><code>GET /api/me</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_get_user</td><td><code>GET /api/users/1</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_get_user</td><td><code>GET /api/users/test</code></td><td>changed: password_hash (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_get_users</td><td><code>GET /api/users</code></td><td>changed: data.*.password_hash (added)</td></tr></tbody></table></details></article>
 
 <footer>Each change above comes from real runs of the code before and after the PR, in Nebius sandboxes; the
-verdicts are NVIDIA Nemotron's, judged against the PR description. Seconds: 19.6.
+verdicts are NVIDIA Nemotron's, judged against the PR description. Seconds: 41.7.
 <br><a href="https://github.com/Maukthik/doppel">What is Doppel? Add it to your repo in one file →</a></footer></main></body></html>
