@@ -80,7 +80,7 @@ padding:16px 18px;margin:0 0 14px}
 .why.intended{border-color:var(--pass)}.why.needs_human{border-color:#C08A1E}
 .sbs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:12px 0 0}
 .sbs p{margin:0 0 4px;font-weight:600;font-size:.88rem}.sbs p span{color:var(--quiet);font-weight:400;margin-left:4px}
-.sbs pre{max-height:260px;overflow-wrap:anywhere;word-break:break-all}
+.sbs pre{max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal}
 table.reqs,table.sus{width:100%;table-layout:fixed;font-size:.88rem;border-collapse:collapse;background:var(--paper)}
 table.reqs td,table.sus td,table.reqs code{overflow-wrap:anywhere;word-break:break-word}
 table.reqs th,table.sus th{text-align:left;color:var(--quiet);font-weight:500;padding:6px 10px;border-bottom:1px solid var(--line)}
@@ -108,5 +108,5 @@ again, then judged by Nemotron against the PR description.</p></div></section>
 <p class='allsame'>Every response matched between the code before and after the PR (after ignoring what differs between two runs of the same code).</p>
 
 <footer>Each change above comes from real runs of the code before and after the PR, in Nebius sandboxes; the
-verdicts are NVIDIA Nemotron's, judged against the PR description. Seconds: 30.4.
+verdicts are NVIDIA Nemotron's, judged against the PR description. Checked in 30 s.
 <br><a href="https://github.com/Maukthik/doppel">What is Doppel? Add it to your repo in one file →</a></footer></main></body></html>
