@@ -80,7 +80,7 @@ padding:16px 18px;margin:0 0 14px}
 .why.intended{border-color:var(--pass)}.why.needs_human{border-color:#C08A1E}
 .sbs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:12px 0 0}
 .sbs p{margin:0 0 4px;font-weight:600;font-size:.88rem}.sbs p span{color:var(--quiet);font-weight:400;margin-left:4px}
-.sbs pre{max-height:260px;overflow-wrap:anywhere;word-break:break-all}
+.sbs pre{max-height:260px;white-space:pre-wrap;overflow-wrap:anywhere;word-break:normal}
 table.reqs,table.sus{width:100%;table-layout:fixed;font-size:.88rem;border-collapse:collapse;background:var(--paper)}
 table.reqs td,table.sus td,table.reqs code{overflow-wrap:anywhere;word-break:break-word}
 table.reqs th,table.sus th{text-align:left;color:var(--quiet);font-weight:500;padding:6px 10px;border-bottom:1px solid var(--line)}
@@ -106,21 +106,17 @@ response, and had NVIDIA Nemotron judge each difference against what the pull re
 ignored.</p><p><b>Base vs head:</b> every other difference is a behavior change. It is re-checked by running it
 again, then judged by Nemotron against the PR description.</p></div></section>
 <h2>Regressions the PR doesn't mention</h2><article class="change regression">
-<header><span class="n">1</span><div><h3>Responses now include name; responses no longer include message</h3><p><code>POST /api/tokens</code>, <code>GET /api/users</code> · 13 requests from 10 tests</p></div>
-<span class="pill regression">Regression</span></header><p class="why regression">The PR description only mentions tidying error handlers without announcing the field rename from &#x27;message&#x27; to &#x27;name&#x27;, which changes the API response structure for authentication errors.</p>
-<div class="sbs"><div><p>Base <span>before the PR</span></p><pre>{
- &quot;message&quot;: &quot;Unauthorized&quot;,
- &quot;name&quot;: &quot;(absent)&quot;
-}</pre></div>
-<div><p>Head <span>with the PR</span></p><pre>{
- &quot;message&quot;: &quot;(absent)&quot;,
- &quot;name&quot;: &quot;Unauthorized&quot;
-}</pre></div></div>
+<header><span class="n">1</span><div><h3>Field renamed in responses: message → name</h3><p><code>POST /api/tokens</code>, <code>GET /api/users</code> · 13 requests from 10 tests</p></div>
+<span class="pill regression">Regression</span></header><p class="why regression">The PR description only mentions tidying error handlers without announcing the field rename from &#x27;message&#x27; to &#x27;name&#x27; in the JSON response body.</p>
+<div class="sbs"><div><p>Base <span>before the PR</span></p><pre>message: &quot;Unauthorized&quot;
+name: not in the response</pre></div>
+<div><p>Head <span>with the PR</span></p><pre>message: not in the response
+name: &quot;Unauthorized&quot;</pre></div></div>
 <details><summary>All 13 requests behind this change</summary>
 <table class="reqs"><colgroup><col style="width:14%"><col style="width:30%"><col style="width:26%"><col style="width:30%">
 </colgroup><thead><tr><th>Found by</th><th>Who</th><th>Request</th><th>What changed</th></tr></thead>
 <tbody><tr><td>your tests</td><td>test_auth.py::test_bad_login</td><td><code>POST /api/tokens</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_get_token</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_get_token</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_no_auth</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_no_login</td><td><code>POST /api/tokens</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_refresh_revoke_all</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_refresh_revoke_all</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_refresh_revoke_all</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_refresh_token</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_reset_password</td><td><code>POST /api/tokens</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_revoke</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_auth.py::test_token_expired</td><td><code>GET /api/users</code></td><td>changed: message (removed), name (added)</td></tr><tr><td>your tests</td><td>test_users.py::test_edit_password</td><td><code>POST /api/tokens</code></td><td>changed: message (removed), name (added)</td></tr></tbody></table></details></article>
 
 <footer>Each change above comes from real runs of the code before and after the PR, in Nebius sandboxes; the
-verdicts are NVIDIA Nemotron's, judged against the PR description. Seconds: 37.6.
+verdicts are NVIDIA Nemotron's, judged against the PR description. Checked in 42 s.
 <br><a href="https://github.com/Maukthik/doppel">What is Doppel? Add it to your repo in one file →</a></footer></main></body></html>
