@@ -18,7 +18,10 @@ update_user_schema = UpdateUserSchema(partial=True)
 @body(user_schema)
 @response(user_schema, 201)
 def new(args):
-    """Register a new user"""
+    """Register a new user
+
+    Usernames must start with a letter. Emails must be unique.
+    """
     user = User(**args)
     db.session.add(user)
     db.session.commit()
