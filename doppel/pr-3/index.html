@@ -94,19 +94,17 @@ footer{margin:40px 0 0;color:var(--quiet);font-size:.85rem;border-top:1px solid 
 </style></head>
 <body><main><p class="brand">doppel check · doppel-demo</p>
 <h1>Better endpoint descriptions</h1>
-<p class="what">Doppel ran this app's code from before and after the pull request side by side, compared every
-response, and had NVIDIA Nemotron judge each difference against what the pull request says it does.</p>
+<p class="what">Doppel ran this app's code from before and after the pull request side by side, compared every response.</p>
 <div class="banner green">No regressions</div>
-<div class="modes"><div class="mode on"><h3>Your tests <span>test mode · no setup</span></h3><ul><li><b>44</b> tests sent <b>117</b> requests</li><li>command <code>python -m pytest -p no:logging</code> (from tox.ini)</li><li>noise ignored: <code>access_token</code>, <code>first_seen</code>, <code>last_seen</code>, <code>refresh_token</code>, <code>timestamp</code></li><li>left out: 1 compared on outcome only</li></ul></div><div class="mode off"><h3>Invented users <span>the guided twin</span></h3><p>off (this repo has no doppel.toml). `doppel init` writes one, so invented users can explore what no test calls</p></div></div>
+<div class="modes"><div class="mode on"><h3>Your tests <span>test mode · no setup</span></h3><ul><li><b>44</b> tests sent <b>117</b> requests</li><li>command <code>python -m pytest -p no:logging</code> (from tox.ini)</li><li>noise ignored: <code>access_token</code>, <code>first_seen</code>, <code>last_seen</code>, <code>refresh_token</code>, <code>timestamp</code></li><li>left out: 1 test compared on pass or fail only (their requests differ from run to run)</li></ul></div><div class="mode off"><h3>Invented users <span>the guided twin</span></h3><p>Off (this repo has no doppel.toml). Run <code>doppel init</code> to add one, and invented users will explore what no test calls.</p></div></div>
 <section class="worlds3" aria-label="How Doppel decides">
 <div class="ws"><div class="w"><b>Base</b><span>the code before the PR</span></div>
 <div class="w"><b>Base again</b><span>the same code, run again</span></div>
 <div class="w after"><b>Head</b><span>the code with the PR</span></div></div>
 <div class="wcap"><p><b>Base vs base again:</b> whatever differs between two runs of the same code is noise, and is
 ignored.</p><p><b>Base vs head:</b> every other difference is a behavior change. It is re-checked by running it
-again, then judged by Nemotron against the PR description.</p></div></section>
+again.</p></div></section>
 <p class='allsame'>Every response matched between the code before and after the PR (after ignoring what differs between two runs of the same code).</p>
 
-<footer>Each change above comes from real runs of the code before and after the PR, in Nebius sandboxes; the
-verdicts are NVIDIA Nemotron's, judged against the PR description. Checked in 30 s.
+<footer>Both versions of the code ran in Nebius sandboxes. Checked in 28 s.
 <br><a href="https://github.com/Maukthik/doppel">What is Doppel? Add it to your repo in one file →</a></footer></main></body></html>
